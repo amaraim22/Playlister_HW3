@@ -116,7 +116,7 @@ export const useGlobalStore = () => {
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
-                let playlist = response.data.playist;
+                let playlist = response.data.playlist;
                 playlist.name = newName;
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
@@ -169,12 +169,29 @@ export const useGlobalStore = () => {
         asyncLoadIdNamePairs();
     }
 
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let payload = { name: "Untitled", songs: [] };
+            let response = await api.createPlaylist(payload);
+            if (response.data.success) {
+                let newPlaylist = response.data.playlist;
+                if (response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.CREATE_NEW_LIST,
+                        payload: newPlaylist
+                    });
+                    store.history.push("/playlist/" + newPlaylist._id);
+                }
+            }
+        }
+        asyncCreateNewList();       
+    }
+
     store.setCurrentList = function (id) {
         async function asyncSetCurrentList(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
-
                 if (response.data.success) {
                     storeReducer({
                         type: GlobalStoreActionType.SET_CURRENT_LIST,
@@ -197,7 +214,7 @@ export const useGlobalStore = () => {
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
-    store.setlistNameActive = function () {
+    store.setIsListNameEditActive = function () {
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null

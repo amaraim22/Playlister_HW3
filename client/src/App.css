@@ -102,8 +102,35 @@ body {
   font-size: 36pt;
 }
 
-#add-list-button {
-  float:left;
+#playlist-selector-heading {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  text-align:center;
+  font-size: 36pt;
+  font-weight: bold;
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--swatch-primary);
+}
+
+#list-selector-list {
+  grid-column: 1 / 2;
+  grid-row: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  background-color: var(--swatch-primary);
+}
+
+.playlister-button {
+  font-size:36pt;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+  box-shadow: 2px 4px #888888;
+  border-radius: 5px;
 }
 
 .list-card, .selected-list-card, .unselected-list-card {

@@ -13,7 +13,7 @@ createPlaylist = (req, res) => {
     if (!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a Playlist',
+            error: 'You must provide a Playlist to create',
         })
     }
 
