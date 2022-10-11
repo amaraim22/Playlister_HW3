@@ -119,7 +119,7 @@ export const useGlobalStore = () => {
                 let playlist = response.data.playlist;
                 playlist.name = newName;
                 async function updateList(playlist) {
-                    response = await api.updatePlaylistById(playlist._id, playlist);
+                    response = await api.updatePlaylist(playlist._id, playlist);
                     if (response.data.success) {
                         async function getListPairs(playlist) {
                             response = await api.getPlaylistPairs();
@@ -203,12 +203,15 @@ export const useGlobalStore = () => {
         }
         asyncSetCurrentList(id);
     }
+
     store.getPlaylistSize = function() {
         return store.currentList.songs.length;
     }
+
     store.undo = function () {
         tps.undoTransaction();
     }
+
     store.redo = function () {
         tps.doTransaction();
     }
@@ -219,6 +222,14 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null
         });
+    }
+
+    store.deleteMarkedList = function () {
+        
+    }
+
+    store.hideDeleteListModal = function () {
+        
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

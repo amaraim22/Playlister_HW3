@@ -12,7 +12,7 @@ function SongCard(props) {
             id={'song-' + index + '-card'}
             className={cardClass}
         >
-            {index + 1}.
+            {index + 1}. 
             <a
                 id={'song-' + index + '-link'}
                 className="song-link"
