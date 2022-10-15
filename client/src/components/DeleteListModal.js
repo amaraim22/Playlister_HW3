@@ -12,12 +12,12 @@ import { GlobalStoreContext } from '../store'
 function DeleteListModal() {
     const { store } = useContext(GlobalStoreContext);
     let name = "";
-    if (store.markListForDeletion) {
-        if(store.markListForDeletion.playlist)
-            name = store.markListForDeletion.playlist.name;
+
+    if (store.listMarkedForDeletion) {
+        name = store.listMarkedForDeletion.playlist.name;
     }
     function handleDeleteList(event) {
-        //store.deleteMarkedList();
+        store.deleteMarkedList();
     }
     function handleCloseModal(event) {
         store.hideDeleteListModal();

@@ -25,9 +25,7 @@ function ListCard(props) {
                 }
     
                 // CHANGE THE CURRENT LIST
-                console.log("setCurrentList: " + _id);
-                store.setCurrentList(_id);    
-                //console.log("currentList from setCurrentList: " + store.currentList.name);    
+                store.setCurrentList(_id);     
             }          
         }
     }
@@ -40,7 +38,6 @@ function ListCard(props) {
                 _id = ("" + _id).substring("delete-list-".length);
             }
 
-            console.log("markListForDeletion: " + _id);
             store.markListForDeletion(_id);
         }
     }
