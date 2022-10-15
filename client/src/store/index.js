@@ -31,6 +31,7 @@ export const useGlobalStore = () => {
         idNamePairs: [],
         currentList: null,
         newListCounter: 0,
+        markListForDeletion: null,
         listNameActive: false
     });
 
@@ -45,6 +46,7 @@ export const useGlobalStore = () => {
                     idNamePairs: payload.idNamePairs,
                     currentList: payload.playlist,
                     newListCounter: store.newListCounter,
+                    markListForDeletion: null,
                     listNameActive: false
                 });
             }
@@ -54,6 +56,7 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
+                    markListForDeletion: null,
                     listNameActive: false
                 })
             }
@@ -63,6 +66,7 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter + 1,
+                    markListForDeletion: null,
                     listNameActive: false
                 })
             }
@@ -72,6 +76,7 @@ export const useGlobalStore = () => {
                     idNamePairs: payload,
                     currentList: null,
                     newListCounter: store.newListCounter,
+                    markListForDeletion: null,
                     listNameActive: false
                 });
             }
@@ -81,6 +86,7 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
+                    markListForDeletion: payload,
                     listNameActive: false
                 });
             }
@@ -90,6 +96,7 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter,
+                    markListForDeletion: null,
                     listNameActive: false
                 });
             }
@@ -99,6 +106,7 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter,
+                    markListForDeletion: null,
                     listNameActive: true
                 });
             }
@@ -187,6 +195,29 @@ export const useGlobalStore = () => {
         asyncCreateNewList();       
     }
 
+    store.deleteMarkedList = function () {
+        
+    }
+
+    store.markListForDeletion = function (id) {
+        async function asyncMarkListForDeletion(id) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
+                    payload: {
+                        id: id,
+                        playlist: playlist
+                    }
+                });
+                store.showDeleteListModal();
+            }
+        }
+        asyncMarkListForDeletion(id);
+        
+    }
+
     store.setCurrentList = function (id) {
         async function asyncSetCurrentList(id) {
             let response = await api.getPlaylistById(id);
@@ -199,6 +230,7 @@ export const useGlobalStore = () => {
                     });
                     store.history.push("/playlist/" + playlist._id);
                 }
+                //console.log(store.currentList);
             }
         }
         asyncSetCurrentList(id);
@@ -224,12 +256,13 @@ export const useGlobalStore = () => {
         });
     }
 
-    store.deleteMarkedList = function () {
-        
+    store.showDeleteListModal = function() {
+        let modal = document.getElementById("delete-list-modal");
+        modal.classList.add("is-visible");
     }
-
-    store.hideDeleteListModal = function () {
-        
+    store.hideDeleteListModal = function() {
+        let modal = document.getElementById("delete-list-modal");
+        modal.classList.remove("is-visible");
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

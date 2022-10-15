@@ -12,20 +12,21 @@ import { GlobalStoreContext } from '../store'
 function DeleteListModal() {
     const { store } = useContext(GlobalStoreContext);
     let name = "";
-    if (store.currentList) {
-        name = store.currentList.name;
+    if (store.markListForDeletion) {
+        if(store.markListForDeletion.playlist)
+            name = store.markListForDeletion.playlist.name;
     }
     function handleDeleteList(event) {
-        store.deleteMarkedList();
+        //store.deleteMarkedList();
     }
     function handleCloseModal(event) {
         store.hideDeleteListModal();
     }
     return (
         <div 
-        className="modal" 
-        id="delete-list-modal" 
-        data-animation="slideInOutLeft">
+            className="modal" 
+            id="delete-list-modal" 
+            data-animation="slideInOutLeft">
             <div className="modal-root" id='verify-delete-list-root'>
                 <div className="modal-north modal-prompt">
                     Delete playlist?
@@ -48,7 +49,7 @@ function DeleteListModal() {
                     >Cancel</button>
                 </div>
             </div>
-    </div>
+        </div>
     );
 }
 

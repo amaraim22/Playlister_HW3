@@ -18,11 +18,30 @@ function ListCard(props) {
     function handleLoadList(event) {
         if (!event.target.disabled) {
             let _id = event.target.id;
-            if (_id.indexOf('list-card-text-') >= 0)
-                _id = ("" + _id).substring("list-card-text-".length);
 
-            // CHANGE THE CURRENT LIST
-            store.setCurrentList(_id);
+            if (!(_id.indexOf('delete-list-') >= 0)) {
+                if (_id.indexOf('list-card-text-') >= 0) {
+                    _id = ("" + _id).substring("list-card-text-".length);             
+                }
+    
+                // CHANGE THE CURRENT LIST
+                console.log("setCurrentList: " + _id);
+                store.setCurrentList(_id);    
+                //console.log("currentList from setCurrentList: " + store.currentList.name);    
+            }          
+        }
+    }
+
+    function handleMarkListForDeletion(event) {
+        if (!event.target.disabled) {
+            let _id = event.target.id;
+
+            if (_id.indexOf('delete-list-') >= 0) {
+                _id = ("" + _id).substring("delete-list-".length);
+            }
+
+            console.log("markListForDeletion: " + _id);
+            store.markListForDeletion(_id);
         }
     }
 
@@ -75,6 +94,7 @@ function ListCard(props) {
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
+                onClick={handleMarkListForDeletion}
                 value={"\u2715"}
             />
             <input
