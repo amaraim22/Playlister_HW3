@@ -19,6 +19,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    UPDATE_PLAYLIST: "UPDATE_PLAYLIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -109,6 +110,15 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listMarkedForDeletion: null,
                     listNameActive: true
+                });
+            }
+            case GlobalStoreActionType.UPDATE_PLAYLIST: {
+                return setStore({
+                    idNamePairs: payload.idNamePairs,
+                    currentList: payload.playlist,
+                    newListCounter: store.newListCounter,
+                    listMarkedForDeletion: null,
+                    listNameActive: false
                 });
             }
             default:
@@ -208,7 +218,7 @@ export const useGlobalStore = () => {
     }
 
     store.deleteMarkedList = function () {
-        store.deleteList(store.listMarkedForDeletion.id);
+        store.deleteList(store.listMarkedForDeletion._id);
         store.hideDeleteListModal();
     }
 
@@ -219,10 +229,7 @@ export const useGlobalStore = () => {
                 let playlist = response.data.playlist;
                 storeReducer({
                     type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
-                    payload: {
-                        id: id,
-                        playlist: playlist
-                    }
+                    payload: playlist
                 });
                 store.showDeleteListModal();
             }
@@ -245,6 +252,80 @@ export const useGlobalStore = () => {
             }
         }
         asyncSetCurrentList(id);
+    }
+
+    store.addSong = function (id, song) {
+        async function asyncAddSong(id, song) {
+            let playlistToUpdate = store.currentList;
+            playlistToUpdate.songs.splice(id, 0, song);
+
+            let response = await api.updatePlaylist(playlistToUpdate._id, playlistToUpdate);
+            if (response.data.success) {
+                async function getListPairs(playlistToUpdate) {
+                    response = await api.getPlaylistPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.UPDATE_PLAYLIST,
+                            payload: {
+                                idNamePairs: pairsArray,
+                                playlist: playlistToUpdate
+                            }
+                        });
+                        store.history.push("/playlist/" + playlistToUpdate._id);
+                    }
+                }
+                getListPairs(playlistToUpdate);
+            } 
+        }
+        asyncAddSong(id, song);
+    }
+
+    store.newAddSongTransaction = () => {
+        let newSongId = store.getPlaylistSize + 1;
+        let newSong = {title:"Untitled", artist:"Unknown", youTubeId:"dQw4w9WgXcQ"};
+
+        store.addSong(newSongId, newSong)
+    }
+
+    store.deleteSong = function (id) {
+
+        /*
+        async function asyncAddSong(id, song) {
+            let playlistToUpdate = store.currentList;
+            playlistToUpdate.songs.splice(id, 0, song);
+
+            let response = await api.updatePlaylist(playlistToUpdate._id, playlistToUpdate);
+            if (response.data.success) {
+                async function getListPairs(playlistToUpdate) {
+                    response = await api.getPlaylistPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.UPDATE_PLAYLIST,
+                            payload: {
+                                idNamePairs: pairsArray,
+                                playlist: playlistToUpdate
+                            }
+                        });
+                        store.history.push("/playlist/" + playlistToUpdate._id);
+                    }
+                }
+                getListPairs(playlistToUpdate);
+            } 
+        }
+        asyncAddSong(id, song);
+        */
+    }
+
+    store.markSongForDeletion = function (id) {
+        console.log(id);
+    }
+
+    store.newDeleteSongTransaction = (id) => {
+        console.log("currentList: " + store.currentList.name);
+
+        store.deleteSong(id)
     }
 
     store.getPlaylistSize = function() {
