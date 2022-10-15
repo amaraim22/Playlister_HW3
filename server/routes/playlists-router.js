@@ -10,6 +10,7 @@ const router = express.Router()
 
 router.post('/playlist', PlaylistController.createPlaylist)
 router.put('/playlist/:id', PlaylistController.updatePlaylist)
+router.delete('/playlist/:id', PlaylistController.deletePlaylist)
 router.get('/playlist/:id', PlaylistController.getPlaylistById)
 router.get('/playlists', PlaylistController.getAllPlaylists)
 router.get('/playlistpairs', PlaylistController.getPlaylistPairs)
