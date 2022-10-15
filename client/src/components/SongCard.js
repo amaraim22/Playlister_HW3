@@ -9,8 +9,8 @@ function SongCard(props) {
             let _id = event.target.id;
 
 
-            if (_id.indexOf('remove-song-') >= 0) {
-                _id = ("" + _id).substring("remove-song-".length);
+            if (_id.indexOf('delete-song-') >= 0) {
+                _id = ("" + _id).substring("delete-song-".length);
             }
 
             store.markSongForDeletion(_id);
@@ -34,7 +34,7 @@ function SongCard(props) {
             </a>
             <input
                 type="button"
-                id={"remove-song-" + index}
+                id={"delete-song-" + index}
                 className="list-card-button"
                 onClick={handleMarkSongForDeletion}
                 value={"\u2715"}
