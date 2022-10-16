@@ -1,7 +1,14 @@
 import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
+
+import AddSong_Transaction from '../transactions/AddSong_Transaction'
+import DeleteSong_Transaction from '../transactions/DeleteSong_Transaction'
+import EditSong_Transaction from '../transactions/EditSong_Transaction'
+import MoveSong_Transaction from '../transactions/MoveSong_Transaction'
+
 export const GlobalStoreContext = createContext({});
+
 /*
     This is our global data store. Note that it uses the Flux design pattern,
     which makes use of things like actions and reducers. 
@@ -301,20 +308,24 @@ export const useGlobalStore = () => {
         playlistToUpdate.songs.splice(id, 0, song);
 
         store.updatePlaylist(playlistToUpdate);
+        return id;
     }
 
     store.newAddSongTransaction = () => {
         let newSongId = store.currentList.songs.length;
         let newSong = {title:"Untitled", artist:"Unknown", youTubeId:"dQw4w9WgXcQ"};
 
-        store.addSong(newSongId, newSong);
+        let transaction = new AddSong_Transaction(store, newSongId, newSong);
+        tps.addTransaction(transaction);
     }
 
     store.deleteSong = function (id) {
+        let oldSong = store.currentList.songs[id];
         let playlistToUpdate = store.currentList;
         playlistToUpdate.songs.splice(id, 1);
         
         store.updatePlaylist(playlistToUpdate);
+        return oldSong;
     }
 
     store.markSongForDeletion = function (id) {      
@@ -329,17 +340,24 @@ export const useGlobalStore = () => {
     }
 
     store.newDeleteSongTransaction = (id) => {
-        store.deleteSong(id);
+        let transaction = new DeleteSong_Transaction(store, id);
+        tps.addTransaction(transaction);
+
         store.hideDeleteSongModal();
     }
 
     store.editSong = function (id, newSong) {
+        let song = store.currentList.songs[id];
+        let oldSong = { _id:song._id, title:song.title, artist:song.artist, youTubeId:song.youTubeId }
+
         let playlistToUpdate = store.currentList;
+
         playlistToUpdate.songs[id].title = newSong.title;
         playlistToUpdate.songs[id].artist = newSong.artist;
         playlistToUpdate.songs[id].youTubeId = newSong.youTubeId;
         
         store.updatePlaylist(playlistToUpdate);
+        return oldSong;
     }
 
     store.editSongActive = function(id) {
@@ -354,7 +372,9 @@ export const useGlobalStore = () => {
     }
 
     store.newEditSongTransaction = (id, newSong) => {
-        store.editSong(id, newSong);
+        newSong._id = store.currentList._id;
+        let transaction = new EditSong_Transaction(store, id, newSong);
+        tps.addTransaction(transaction);
         store.hideEditSongModal();
     }
 
@@ -381,7 +401,8 @@ export const useGlobalStore = () => {
     }
 
     store.newMoveSongTransaction = (start, end) => {
-        store.moveSong(start, end)
+        let transaction = new MoveSong_Transaction(store, start, end);
+        tps.addTransaction(transaction);
     }
 
     store.updatePlaylist = function (playlistToUpdate) {
