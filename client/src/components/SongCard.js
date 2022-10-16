@@ -7,13 +7,20 @@ function SongCard(props) {
     function handleMarkSongForDeletion(event) {
         if (!event.target.disabled) {
             let _id = event.target.id;
-
-
             if (_id.indexOf('delete-song-') >= 0) {
                 _id = ("" + _id).substring("delete-song-".length);
             }
-
             store.markSongForDeletion(_id);
+        }
+    }
+
+    function handleEditSongActive(event) {
+        if (!event.target.disabled) {
+            let _id = event.target.id;
+            if (_id.indexOf('song-card-') >= 0) {
+                _id = ("" + _id).substring("song-card-".length);
+            }
+            store.editSongActive(_id);
         }
     }
 
@@ -22,12 +29,13 @@ function SongCard(props) {
     return (
         <div
             key={index}
-            id={'song-' + index + '-card'}
+            id={'song-card-' + index}
             className={cardClass}
+            onDoubleClick={handleEditSongActive}
         >
             {index + 1}. 
             <a
-                id={'song-' + index + '-link'}
+                id={'song--link-' + index}
                 className="song-link"
                 href={"https://www.youtube.com/watch?v=" + song.youTubeId}>
                 {song.title} by {song.artist}
