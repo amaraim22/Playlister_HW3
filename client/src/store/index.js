@@ -297,71 +297,27 @@ export const useGlobalStore = () => {
     }
 
     store.addSong = function (id, song) {
-        async function asyncAddSong(id, song) {
-            let playlistToUpdate = store.currentList;
-            playlistToUpdate.songs.splice(id, 0, song);
+        let playlistToUpdate = store.currentList;
+        playlistToUpdate.songs.splice(id, 0, song);
 
-            let response = await api.updatePlaylist(playlistToUpdate._id, playlistToUpdate);
-            if (response.data.success) {
-                async function getListPairs(playlistToUpdate) {
-                    response = await api.getPlaylistPairs();
-                    if (response.data.success) {
-                        let pairsArray = response.data.idNamePairs;
-                        storeReducer({
-                            type: GlobalStoreActionType.UPDATE_PLAYLIST,
-                            payload: {
-                                idNamePairs: pairsArray,
-                                playlist: playlistToUpdate
-                            }
-                        });
-                        store.history.push("/playlist/" + playlistToUpdate._id);
-                    }
-                }
-                getListPairs(playlistToUpdate);
-            } 
-        }
-        asyncAddSong(id, song);
+        store.updatePlaylist(playlistToUpdate);
     }
 
     store.newAddSongTransaction = () => {
         let newSongId = store.currentList.songs.length;
         let newSong = {title:"Untitled", artist:"Unknown", youTubeId:"dQw4w9WgXcQ"};
 
-        console.log("Add Song Id: " + newSongId);
         store.addSong(newSongId, newSong);
-        for(let i = 0; i<store.currentList.songs.length; i++)
-            console.log("After Delete Song: " + i + " " + store.currentList.songs[i].title);
     }
 
     store.deleteSong = function (id) {
-        async function asyncDeleteSong(id) {
-            let playlistToUpdate = store.currentList;
-            playlistToUpdate.songs.splice(id, 1);
-            
-            let response = await api.updatePlaylist(playlistToUpdate._id, playlistToUpdate);
-            if (response.data.success) {
-                async function getListPairs(playlistToUpdate) {
-                    response = await api.getPlaylistPairs();
-                    if (response.data.success) {
-                        let pairsArray = response.data.idNamePairs;
-                        storeReducer({
-                            type: GlobalStoreActionType.UPDATE_PLAYLIST,
-                            payload: {
-                                idNamePairs: pairsArray,
-                                playlist: playlistToUpdate
-                            }
-                        });
-                        store.history.push("/playlist/" + playlistToUpdate._id);
-                    }
-                }
-                getListPairs(playlistToUpdate);
-            } 
-        }
-        asyncDeleteSong(id);
+        let playlistToUpdate = store.currentList;
+        playlistToUpdate.songs.splice(id, 1);
+        
+        store.updatePlaylist(playlistToUpdate);
     }
 
     store.markSongForDeletion = function (id) {      
-        console.log("Delete Song Id: " + id);
         storeReducer({
             type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
             payload: {
@@ -375,17 +331,61 @@ export const useGlobalStore = () => {
     store.newDeleteSongTransaction = (id) => {
         store.deleteSong(id);
         store.hideDeleteSongModal();
-        for(let i = 0; i<store.currentList.songs.length; i++)
-            console.log("After Delete Song: " + i + " " + store.currentList.songs[i].title);
     }
 
     store.editSong = function (id, newSong) {
-        async function asyncEditSong(id) {
-            let playlistToUpdate = store.currentList;
-            playlistToUpdate.songs[id].title = newSong.title;
-            playlistToUpdate.songs[id].artist = newSong.artist;
-            playlistToUpdate.songs[id].youTubeId = newSong.youTubeId;
-            
+        let playlistToUpdate = store.currentList;
+        playlistToUpdate.songs[id].title = newSong.title;
+        playlistToUpdate.songs[id].artist = newSong.artist;
+        playlistToUpdate.songs[id].youTubeId = newSong.youTubeId;
+        
+        store.updatePlaylist(playlistToUpdate);
+    }
+
+    store.editSongActive = function(id) {
+        storeReducer({
+            type: GlobalStoreActionType.SONG_TO_EDIT,
+            payload: {
+                currentList: store.currentList,
+                songId: id
+            }
+        }); 
+        store.showEditSongModal();
+    }
+
+    store.newEditSongTransaction = (id, newSong) => {
+        store.editSong(id, newSong);
+        store.hideEditSongModal();
+    }
+
+    store.moveSong = (start, end) => {
+        let songs = store.currentList.songs;
+        
+        if (start < end) {
+            let temp = songs[start];
+            for (let i = start; i < end; i++) {
+                songs[i] = songs.at(i + 1);
+            }
+            songs[end] = temp;
+        }
+        else if (start > end) {
+            let temp = songs[start];
+            for (let i = start; i > end; i--) {
+                songs[i] = songs.at(i - 1);
+            }
+            songs[end] = temp;
+        }
+
+        store.currentList.songs = songs;
+        store.updatePlaylist(store.currentList);
+    }
+
+    store.newMoveSongTransaction = (start, end) => {
+        store.moveSong(start, end)
+    }
+
+    store.updatePlaylist = function (playlistToUpdate) {
+        async function asyncUpdatePlaylist(playlistToUpdate) {          
             let response = await api.updatePlaylist(playlistToUpdate._id, playlistToUpdate);
             if (response.data.success) {
                 async function getListPairs(playlistToUpdate) {
@@ -405,26 +405,7 @@ export const useGlobalStore = () => {
                 getListPairs(playlistToUpdate);
             } 
         }
-        asyncEditSong(id, newSong);
-    }
-
-    store.editSongActive = function(id) {
-        console.log("Edit Song Id: " + id);
-        storeReducer({
-            type: GlobalStoreActionType.SONG_TO_EDIT,
-            payload: {
-                currentList: store.currentList,
-                songId: id
-            }
-        }); 
-        store.showEditSongModal();
-    }
-
-    store.newEditSongTransaction = (id, newSong) => {
-        store.editSong(id, newSong);
-        store.hideEditSongModal();
-        for(let i = 0; i<store.currentList.songs.length; i++)
-            console.log("After Edit Song: " + i + " " + store.currentList.songs[i].title);
+        asyncUpdatePlaylist(playlistToUpdate);
     }
 
     store.getPlaylistSize = function() {
