@@ -1,6 +1,6 @@
 import { GlobalStoreContext } from '../store'
 import { useHistory } from 'react-router-dom'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 /*
     This modal is shown when the user asks to delete a list. Note 
     that before this is shown a list has to be marked for deletion,
@@ -12,48 +12,25 @@ import { useContext, useState } from 'react'
 */
 function EditSongModal() {
     const { store } = useContext(GlobalStoreContext);
-    const [ title, setTitle ] = useState("");
-    const [ artist, setArtist ] = useState("");
-    const [ youTubeId, setYouTubeId ] = useState("");
-
     store.history = useHistory();
-    
-    let songTitle = "";
-    let songArtist = "";
-    let songYouTubeId = "";
+
     if (store.songToEdit) {
         let id = store.songToEdit;
-        songTitle = store.currentList.songs[id].title;
-        songArtist = store.currentList.songs[id].artist;
-        songYouTubeId = store.currentList.songs[id].youTubeId;
+        document.getElementById("titleInput").value = store.currentList.songs[id].title;
+        document.getElementById("artistInput").value = store.currentList.songs[id].artist;
+        document.getElementById("youTubeIdInput").value = store.currentList.songs[id].youTubeId;
     }
 
     function handleEditSongConfirmed(event) {
-        let newTitle = title;
-        let newArtist = artist;
-        let newYouTubeId = youTubeId;
-
-        if(title.length === 0)
-            newTitle = songTitle;
-        if(artist.length === 0)
-            newArtist = songArtist;
-        if(youTubeId.length === 0)
-            newYouTubeId = songYouTubeId;
+        let newTitle = document.getElementById("titleInput").value;
+        let newArtist = document.getElementById("artistInput").value;
+        let newYouTubeId = document.getElementById("youTubeIdInput").value;
         
         let newSong = {title:newTitle, artist:newArtist, youTubeId:newYouTubeId};   
         store.newEditSongTransaction(store.songToEdit, newSong);
     }
     function handleCloseModal(event) {
         store.hideEditSongModal();
-    }
-    function handleUpdateTitle(event) {
-        setTitle(event.target.value);
-    }
-    function handleUpdateArtist(event) {
-        setArtist(event.target.value);
-    }
-    function handleUpdateYouTubeId(event) {
-        setYouTubeId(event.target.value);
     }
 
     return (
@@ -69,19 +46,13 @@ function EditSongModal() {
                     <div className="modal-center-content modal-textfield">
                     <div className="modal-center-content modal-textfield">  
                             Title: <input className="edit-song-input" 
-                                            id="titleInput" 
-                                            defaultValue={songTitle}
-                                            onChange={handleUpdateTitle}
+                                            id="titleInput"       
                                             type="text" /> <br></br>
                             Artist: <input className="edit-song-input" 
                                             id="artistInput" 
-                                            defaultValue={songArtist}
-                                            onChange={handleUpdateArtist}
                                             type="text" /> <br></br>
                             youTubeId: <input className="edit-song-input" 
                                             id="youTubeIdInput" 
-                                            defaultValue={songYouTubeId}
-                                            onChange={handleUpdateYouTubeId}
                                             type="text" /> <br></br>
                         </div>
                     </div>

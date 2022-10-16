@@ -324,10 +324,13 @@ export const useGlobalStore = () => {
     }
 
     store.newAddSongTransaction = () => {
-        let newSongId = store.currentList.songs.length + 1;
+        let newSongId = store.currentList.songs.length;
         let newSong = {title:"Untitled", artist:"Unknown", youTubeId:"dQw4w9WgXcQ"};
 
-        store.addSong(newSongId, newSong)
+        console.log("Add Song Id: " + newSongId);
+        store.addSong(newSongId, newSong);
+        for(let i = 0; i<store.currentList.songs.length; i++)
+            console.log("After Delete Song: " + i + " " + store.currentList.songs[i].title);
     }
 
     store.deleteSong = function (id) {
@@ -358,6 +361,7 @@ export const useGlobalStore = () => {
     }
 
     store.markSongForDeletion = function (id) {      
+        console.log("Delete Song Id: " + id);
         storeReducer({
             type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
             payload: {
@@ -371,12 +375,16 @@ export const useGlobalStore = () => {
     store.newDeleteSongTransaction = (id) => {
         store.deleteSong(id);
         store.hideDeleteSongModal();
+        for(let i = 0; i<store.currentList.songs.length; i++)
+            console.log("After Delete Song: " + i + " " + store.currentList.songs[i].title);
     }
 
     store.editSong = function (id, newSong) {
         async function asyncEditSong(id) {
             let playlistToUpdate = store.currentList;
-            playlistToUpdate.songs[id] = newSong;
+            playlistToUpdate.songs[id].title = newSong.title;
+            playlistToUpdate.songs[id].artist = newSong.artist;
+            playlistToUpdate.songs[id].youTubeId = newSong.youTubeId;
             
             let response = await api.updatePlaylist(playlistToUpdate._id, playlistToUpdate);
             if (response.data.success) {
@@ -401,8 +409,7 @@ export const useGlobalStore = () => {
     }
 
     store.editSongActive = function(id) {
-        console.log(store.currentList.songs[id].title);
-
+        console.log("Edit Song Id: " + id);
         storeReducer({
             type: GlobalStoreActionType.SONG_TO_EDIT,
             payload: {
@@ -414,9 +421,10 @@ export const useGlobalStore = () => {
     }
 
     store.newEditSongTransaction = (id, newSong) => {
-        //let listId = store.currentList._id;
         store.editSong(id, newSong);
         store.hideEditSongModal();
+        for(let i = 0; i<store.currentList.songs.length; i++)
+            console.log("After Edit Song: " + i + " " + store.currentList.songs[i].title);
     }
 
     store.getPlaylistSize = function() {

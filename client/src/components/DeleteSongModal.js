@@ -18,7 +18,7 @@ function DeleteSongModal() {
         songName = store.currentList.songs[id].title;
     }
     function handleDeleteSong(event) {
-        store.newDeleteSongTransaction();
+        store.newDeleteSongTransaction(store.songMarkedForDeletion);
     }
     function handleCloseModal(event) {
         store.hideDeleteSongModal();
