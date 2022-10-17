@@ -29,9 +29,6 @@ export const GlobalStoreActionType = {
     UPDATE_PLAYLIST: "UPDATE_PLAYLIST",
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
     SONG_TO_EDIT: "SONG_TO_EDIT",
-    SET_IS_MODAL_VISIBLE: "SET_IS_MODAL_VISIBLE",
-    SET_CAN_REDO: "SET_CAN_REDO",
-    SET_CAN_UNDO: "SET_CAN_UNDO"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -498,15 +495,6 @@ export const useGlobalStore = () => {
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: true
-        });
-    }
-    store.setModalIsVisible = function () {
-        storeReducer({
-            type: GlobalStoreActionType.SET_IS_MODAL_VISIBLE,
-            payload: {
-                modalVisible: true,
-                listMarkedForDeletion: store.listMarkedForDeletion
-            }
         });
     }
 
