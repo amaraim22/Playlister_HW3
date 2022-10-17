@@ -13,7 +13,6 @@ import EditSongModal from './EditSongModal'
 */
 function PlaylistCards() {
     const { store } = useContext(GlobalStoreContext);
-
     store.history = useHistory();
     
     if(store.currentList == null) {
@@ -21,8 +20,20 @@ function PlaylistCards() {
         return null
     }
 
+    function handleOnKeyDown(event) {
+        if (event.ctrlKey && event.key === 'z') {
+            store.undo();
+        }
+        else if (event.ctrlKey && event.key === 'y') {
+            store.redo();
+        }
+    }
+    function mountComponent() {
+        document.addEventListener("keydown", handleOnKeyDown);
+    }
+
     return (
-        <div id="playlist-cards">
+        <div onKeyDown={mountComponent()} id="playlist-cards">
         {
             store.currentList.songs.map((song, index) => (
                 <SongCard

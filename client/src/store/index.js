@@ -28,7 +28,8 @@ export const GlobalStoreActionType = {
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     UPDATE_PLAYLIST: "UPDATE_PLAYLIST",
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
-    SONG_TO_EDIT: "SONG_TO_EDIT"
+    SONG_TO_EDIT: "SONG_TO_EDIT",
+    LIST_NAME_EDIT_NOT_ACTIVE: "LIST_NAME_EDIT_NOT_ACTIVE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -129,12 +130,12 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: null,
                     newListCounter: store.newListCounter,
                     listMarkedForDeletion: null,
                     songMarkedForDeletion: null,
                     songToEdit: null,
-                    listNameActive: true
+                    listNameActive: payload
                 });
             }
             case GlobalStoreActionType.UPDATE_PLAYLIST: {
@@ -189,7 +190,7 @@ export const useGlobalStore = () => {
                 async function updateList(playlist) {
                     response = await api.updatePlaylist(playlist._id, playlist);
                     if (response.data.success) {
-                        async function getListPairs(playlist) {
+                        async function getListPairs() {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
@@ -197,12 +198,12 @@ export const useGlobalStore = () => {
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                     payload: {
                                         idNamePairs: pairsArray,
-                                        playlist: playlist
+                                        playlist: null
                                     }
                                 });
                             }
                         }
-                        getListPairs(playlist);
+                        getListPairs();
                     }
                 }
                 updateList(playlist);
@@ -217,6 +218,7 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
+        tps.clearAllTransactions();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
@@ -434,46 +436,61 @@ export const useGlobalStore = () => {
     }
 
     store.undo = function () {
-        tps.undoTransaction();
+        if (tps.hasTransactionToUndo()) {
+            tps.undoTransaction();
+        }
     }
-
     store.redo = function () {
-        tps.doTransaction();
+        if (tps.hasTransactionToRedo()) {
+            tps.doTransaction();
+        }
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
-            payload: null
+            payload: true
+        });
+    }
+    store.listNameEditNotActive = function () {
+        storeReducer({
+            type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
+            payload:  false
         });
     }
 
     store.showDeleteListModal = function() {
         let modal = document.getElementById("delete-list-modal");
         modal.classList.add("is-visible");
+        store.setIsListNameEditActive();
     }
     store.hideDeleteListModal = function() {
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
+        store.listNameEditNotActive();
     }
 
     store.showDeleteSongModal = function() {
         let modal = document.getElementById("delete-song-modal");
         modal.classList.add("is-visible");
+        store.setIsListNameEditActive();
     }
     store.hideDeleteSongModal = function() {
         let modal = document.getElementById("delete-song-modal");
         modal.classList.remove("is-visible");
+        store.listNameEditNotActive();
     }
 
     store.showEditSongModal = function() {
         let modal = document.getElementById("edit-song-modal");
         modal.classList.add("is-visible");
+        store.setIsListNameEditActive();
     }
     store.hideEditSongModal = function() {
         let modal = document.getElementById("edit-song-modal");
         modal.classList.remove("is-visible");
+        store.listNameEditNotActive();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
