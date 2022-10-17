@@ -113,8 +113,8 @@ getPlaylistPairs = async (req, res) => {
         }
         if (!playlists.length) {
             return res
-                .status(404)
-                .json({ success: false, error: 'Playlists not found'})
+                .status(200)
+                .json({ success: true, idNamePairs: null })
         }
         else {
             // PUT ALL THE LISTS INTO ID, NAME PAIRS
