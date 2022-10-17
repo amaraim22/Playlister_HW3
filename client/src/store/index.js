@@ -293,6 +293,7 @@ export const useGlobalStore = () => {
         async function asyncDeleteList(id) {
             let response = await api.deletePlaylist(id);
             if (response.data.success) {
+                store.loadIdNamePairs();
                 store.history.push("/");
             }
         }
