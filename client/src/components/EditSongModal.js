@@ -14,8 +14,11 @@ function EditSongModal() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    let id = -1;
+    let list = null;
     if (store.songToEdit) {
-        let id = store.songToEdit;
+        id = store.songToEdit;
+        list = store.currentList;
         document.getElementById("titleInput").value = store.currentList.songs[id].title;
         document.getElementById("artistInput").value = store.currentList.songs[id].artist;
         document.getElementById("youTubeIdInput").value = store.currentList.songs[id].youTubeId;
@@ -31,6 +34,7 @@ function EditSongModal() {
     }
     function handleCloseModal(event) {
         store.hideEditSongModal();
+        store.setCurrentList(list._id);    
     }
 
     return (

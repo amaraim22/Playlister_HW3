@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
 /*
     This modal is shown when the user asks to delete a list. Note 
@@ -21,6 +21,7 @@ function DeleteListModal() {
     }
     function handleCloseModal(event) {
         store.hideDeleteListModal();
+        store.loadIdNamePairs();
     }
     return (
         <div 

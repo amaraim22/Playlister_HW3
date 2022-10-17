@@ -13,8 +13,11 @@ function DeleteSongModal() {
     const { store } = useContext(GlobalStoreContext);
     let songName = "";
 
+    let id = -1;
+    let list = null;
     if (store.songMarkedForDeletion) {
-        let id = store.songMarkedForDeletion;
+        id = store.songMarkedForDeletion;
+        list = store.currentList;
         songName = store.currentList.songs[id].title;
     }
     function handleDeleteSong(event) {
@@ -22,6 +25,7 @@ function DeleteSongModal() {
     }
     function handleCloseModal(event) {
         store.hideDeleteSongModal();
+        store.setCurrentList(list._id);
     }
     return (
         <div 
