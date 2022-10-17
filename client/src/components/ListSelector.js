@@ -19,6 +19,27 @@ const ListSelector = () => {
     function handleCreateNewList() {
         store.createNewList();
     }
+
+    function disableButton(id) {
+        let button = document.getElementById(id);
+        if(button) {
+            button.classList.add("disabled");
+            button.disabled = true;
+        }
+    } 
+    function enableButton(id) {
+        let button = document.getElementById(id);
+        if(button) {
+            button.classList.remove("disabled");
+            button.disabled = false;
+        }
+    }
+    
+    if (store.listEditNameActive || store.isModalVisible)
+        disableButton('add-list-button');
+    else
+        enableButton('add-list-button');
+
     let listCard = "";
     if (store) {
         listCard = store.idNamePairs.map((pair) => (
