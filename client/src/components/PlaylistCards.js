@@ -13,24 +13,11 @@ import EditSongModal from './EditSongModal'
 */
 function PlaylistCards() {
     const { store } = useContext(GlobalStoreContext);
-
     store.history = useHistory();
-    document.onkeydown = handleAppKeyDown;
     
     if(store.currentList == null) {
         store.history.push("/");
         return null
-    }
-
-    function handleAppKeyDown(event) {
-        if (event.ctrlKey && event.key === 'z') {
-            if(store.canUndo)
-                store.undo();
-        }
-        else if (event.ctrlKey && event.key === 'y') {
-            if(store.canRedo)
-                store.redo();
-        }
     }
 
     return (
@@ -45,9 +32,8 @@ function PlaylistCards() {
                 />
             ))
         }
-        <DeleteSongModal />
-        <EditSongModal />
-            
+            <DeleteSongModal />
+            <EditSongModal />          
         </div>
     )
 }
