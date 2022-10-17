@@ -21,19 +21,6 @@ function PlaylistCards() {
         return null
     }
 
-    /*function handleOnKeyDown(event) {
-        if (event.ctrlKey && event.key === 'z') {
-            store.undo();
-        }
-        else if (event.ctrlKey && event.key === 'y') {
-            store.redo();
-        }
-    }
-    function mountComponent() {
-        document.addEventListener("keydown", handleOnKeyDown);
-    }
-    onKeyDown={mountComponent()}*/
-
     return (
         <div id="playlist-cards">
         {

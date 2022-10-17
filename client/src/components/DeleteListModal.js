@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
 /*
     This modal is shown when the user asks to delete a list. Note 
