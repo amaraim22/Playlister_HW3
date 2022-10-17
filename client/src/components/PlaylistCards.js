@@ -14,24 +14,23 @@ import EditSongModal from './EditSongModal'
 function PlaylistCards() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
+    document.onkeydown = handleAppKeyDown;
     
     if(store.currentList == null) {
         store.history.push("/");
         return null
     }
 
-    /*function handleOnKeyDown(event) {
+    function handleAppKeyDown(event) {
         if (event.ctrlKey && event.key === 'z') {
-            store.undo();
+            if(store.canUndo)
+                store.undo();
         }
         else if (event.ctrlKey && event.key === 'y') {
-            store.redo();
+            if(store.canRedo)
+                store.redo();
         }
     }
-    function mountComponent() {
-        document.addEventListener("keydown", handleOnKeyDown);
-    }
-    onKeyDown={mountComponent()}*/
 
     return (
         <div id="playlist-cards">
