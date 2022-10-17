@@ -33,11 +33,11 @@ const ListSelector = () => {
             button.disabled = false;
         }
     }
-
-    if(store.listNameActive)
-        disableButton("add-list-button");
+    
+    if (store.listEditNameActive || store.isModalVisible)
+        disableButton('add-list-button');
     else
-        enableButton("add-list-button");
+        enableButton('add-list-button');
 
     let listCard = "";
     if (store) {

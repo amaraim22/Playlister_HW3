@@ -20,7 +20,7 @@ function PlaylistCards() {
         return null
     }
 
-    function handleOnKeyDown(event) {
+    /*function handleOnKeyDown(event) {
         if (event.ctrlKey && event.key === 'z') {
             store.undo();
         }
@@ -31,9 +31,10 @@ function PlaylistCards() {
     function mountComponent() {
         document.addEventListener("keydown", handleOnKeyDown);
     }
+    onKeyDown={mountComponent()}*/
 
     return (
-        <div onKeyDown={mountComponent()} id="playlist-cards">
+        <div id="playlist-cards">
         {
             store.currentList.songs.map((song, index) => (
                 <SongCard
